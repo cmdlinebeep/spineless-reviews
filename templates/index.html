@@ -1,0 +1,78 @@
+{% extends "layout.html" %}
+
+{% block body %}
+        <div class="container">
+            <div class="jumbotron">
+                <h1 class="display-4">Go ahead, judge a book by its cover.</h1>
+                    <p class="lead">Or.. its content.  Or author.  It's up to you.  Read from thousands of book reviews, or write your own!</p>
+                    <hr class="my-4">
+                    <blockquote class="blockquote">
+                            <p class="mb-0">
+                                {{ quote }}
+                            </p>
+                            <footer class="blockquote-footer"><cite title="Quote Source">{{ quote_source }}</cite></footer>
+                    </blockquote>
+            </div>
+        </div>
+        
+    {% if not user %}
+    {# Only show the login boxes if they're not logged in, otherwise a search bar #}
+
+        <div class="container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <!--ul class=flashes-->
+                    {% for category, message in messages %}
+                        <!--li>{{ message }}</li-->
+                        <p class="{{ category }}">{{ message }}</p>
+                    {% endfor %}
+                    <!--/ul-->
+                {% endif %}
+            {% endwith %}
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <h3>New here?  <p class="text-primary">Create an account</p></h3>
+                    <div class="col-lg-6">
+                        <form class="bs-component" action="/register" method="POST">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Username" name="username">
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control" placeholder="Password" name="password">
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control" placeholder="Repeat Password" name="repeat_password">
+                            </div>
+                            <button class="btn btn-primary" type="submit">Create Account</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <h3>Been here before?  <p class="text-primary">Sign in</p></h3>
+                    <div class="col-lg-6">
+                        <form class="bs-component" action="/login" method="POST">
+                            <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Username" name="username">
+                            </div>
+                            <div class="form-group">
+                                    <input type="password" class="form-control" placeholder="Password" name="password">
+                            </div>
+                                <button class="btn btn-primary" type="submit">Log In</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% else %}
+    {# User is logged in, a search bar is more intuitive if they get back to here #}
+
+        {% include 'search_bar.html' %}
+
+    {% endif %}
+
+    {# Punted on Modals, couldn't get the UX I wanted #}
+
+{% endblock %}

@@ -1,0 +1,164 @@
+{% extends "layout.html" %}
+
+{% block header %}
+<style>
+.Star2 {
+  align-items: center;
+  /*background: #333;*/
+  color: gold;
+  display: flex;
+  font-size: 35px;
+  /*height: 100vh;*/
+  justify-content: center;
+}
+  </style>
+{% endblock %}
+
+{% block body %}
+
+{# Here we already know the user is logged in due to logged_in decorator function #}
+{# So no need to wrap with 'if user' conditional tags                             #}
+
+{% include 'search_bar.html' %}
+
+<!-- I want this horizontal row to span the whole screen, not just the container, to separate our search functionality -->
+<hr/>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-3">
+            <img src="http://covers.openlibrary.org/b/isbn/{{book.isbn}}-M.jpg" height="280px">
+        </div>
+        <div class="col-sm-6">
+            <div class="bs-component">
+                <table class="table table-hover">
+                    <tbody>
+                        <tr>
+                            <td><h1>{{book.title}}</h1></td>
+                        </tr>
+                        <tr>
+                            <td><h3>{{book.author}}</h3></td>
+                        </tr>
+                        <tr>
+                            <td>ISBN: {{book.isbn}}</td>
+                        </tr>
+                        <tr>
+                            <td>{{book.year}}</td>
+                        </tr>
+                        <tr>
+                            <td><a href="/api/{{book.isbn}}">API</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>                    
+        </div>
+        <div class="col-sm-3">
+            <div class="row">
+                <a href="https://www.goodreads.com/search?q={{book.title}}" target="_blank"><img src="../static/gr_logo_w250.jpg" width="250px"></a>
+            </div>
+            <div class="row">
+                readers rated it
+            </div>
+            <div class="row">
+                <span><h3>
+                    <div class="Star2">
+                    {# NOTE: Here we can't use {{book.num_stars}} in the for loop    #}
+                    {# The {{ }} syntax is just to literally print is, not to use it #}
+                    
+                    {% for i in range( book.num_stars ) %}
+                        ★
+                    {% endfor %}
+                    {% for i in range( book.num_stars, 5 ) %}
+                        ☆
+                    {% endfor %}
+                    </div>{{book.gr_avg_rating}}
+                </h3></span>
+            </div>
+            <div class="row">
+                {{book.gr_num_ratings}} reviews
+            </div>
+        </div>
+    </div>
+
+    <hr/>
+
+</div>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+           
+            {% if user_review %}
+            {# Only allowed to leave one review per book #}
+                <h4>You reviewed this item on {{user_review.pretty_date}}  {{user_review.star_rating}}</h4>
+
+                    <blockquote class="blockquote">
+                        <p class="mb-0">{{user_review.review}}</p>
+                        <footer class="blockquote-footer">{{user}}</footer>
+                    </blockquote>
+                    
+            {% else %}
+                <h2>Leave your own review!</h2>
+
+                <form class="form-group" action="/book/{{book.isbn}}" method="POST">
+                    <label for="star_review">How many stars would you rate this book?</label>
+                    <select class="form-control" id="star_review" name="star_review">
+                        <option>★☆☆☆☆</option>
+                        <option>★★☆☆☆</option>
+                        <option selected>★★★☆☆</option>
+                        <option>★★★★☆</option>
+                        <option>★★★★★</option>
+                    </select>
+                
+                    <label for="text_review">What did you think of it?</label>
+                    <textarea class="form-control" id="text_review" name="text_review" rows="3"></textarea>
+                <button type="submit" class="btn btn-primary">Submit Review</button>
+                </form>
+            {% endif %}
+
+            <hr/>
+
+            {% if reviews %}
+
+                {# Count the number of reviews first, to format the grammar properly #}
+                {# https://stackoverflow.com/questions/7537439/how-to-increment-a-variable-on-a-for-loop-in-jinja-template #}
+                {% set count = [] %}
+                {% for review in reviews %}
+                    {% set __ = count.append(1) %}
+                {% endfor %}
+                {% if count|length > 1 %}
+                    <h2>{{count|length}} Spineless Reviewers had something to say...</h2>
+                {% else %}
+                    <h2>1 Spineless Reviewer had something to say...</h2>
+                {% endif %}
+
+                    <div class="bs-component">
+                            <div class="list-group">
+                                <!-- Removed the href for these so they're not clickable, but still hover -->
+                            
+                    {% for review in reviews %}
+
+                            <a class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">{{review.username}} said..</h5>
+                                    <small class="text-muted">{{review.star_rating}}</small>
+                                </div>
+                                <p class="mb-1">{{review.review}}</p>
+                                <small class="text-muted">{{review.pretty_date}}</small>
+                            </a>
+
+                    {% endfor %}
+                            
+                        </div>
+                    </div>
+
+            {% else %}
+                <h2>No Spineless Reviewers had anything to say...</h2>
+            {% endif %}
+            
+        </div>
+    </div>
+</div>
+
+{% endblock %}

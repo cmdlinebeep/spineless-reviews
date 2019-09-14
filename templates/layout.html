@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Spineless Reviews</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='yeti.bootstrap.min.css') }}">
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <style>
+        /* Sticky footer style  https://getbootstrap.com/docs/3.4/examples/sticky-footer-navbar/   */
+            html {
+            position: relative;
+            min-height: 100%;
+            }
+            body {
+            /* Margin bottom by footer height */
+            margin-bottom: 60px;
+            }
+            .footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            /* Set the fixed height of the footer here */
+            height: 60px;
+            /*background-color: #f5f5f5;*/
+            }
+        </style>
+
+        {% block header %}
+        {% endblock %}
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <a class="navbar-brand" href="{{ url_for('index') }}">Spineless Reviews</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarColor01">
+            <ul class="navbar-nav ml-auto">
+                {% if not user %}
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">Sign In</a></li>
+                {% else %}
+                    <li class="nav-item">Welcome, {{user}}!<a class="nav-link" href="{{ url_for('logout') }}">    Sign Out</a></li>
+                {% endif %}
+            </ul>
+            </div>
+        </nav>
+        
+        <div class="container">
+            <div class="page-header" id="banner">
+                    <div class="row">
+                        <div class="col-lg-8 col-md-7 col-sm-6">
+                        <br>
+                        <br>
+                        </div>
+                    </div>
+            </div>
+        </div>
+
+        {% block body %}
+        {% endblock %}
+
+        <footer class="footer">
+            <div class="container">
+                <p class="text-muted">© Spineless Reviews, {% if year == 2019 %}2019{% else %}2019-{{year}}{% endif %}</p>
+            </div>
+        </footer>
+
+        <!-- Needed for Navbar collapse and other goodies to work -->
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    </body>
+</html>

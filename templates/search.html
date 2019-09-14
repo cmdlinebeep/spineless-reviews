@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+
+{% block header %}
+{% endblock %}
+
+{% block body %}
+
+{# Here we already know the user is logged in due to logged_in decorator function #}
+{# So no need to wrap with 'if user' conditional tags                             #}
+
+{% include 'search_bar.html' %}
+
+<hr/>
+
+<div class="container">
+
+        
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <p class="{{ category }}">{{ message }}</p>
+            {% endfor %}
+        {% else %}
+            {% if books %}
+                <h2>Search Results for "{{query}}"...</h2>
+                
+                <div class="row">
+                {# Counting how many books we got, because I want to inform the user if their results were truncated #}
+                {# https://stackoverflow.com/questions/7537439/how-to-increment-a-variable-on-a-for-loop-in-jinja-template #}
+                {% set count = [] %}
+                {% for book in books %}
+                    {% set __ = count.append(1) %}
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4><a href="/book/{{book.isbn}}" class="card-title">{{book.title}}</a></h4>
+                                <h6 class="card-subtitle mb-2">{{book.author}}</h6>
+                                <p class="card-text text-muted">{{book.year}}</p>
+                                <p class="card-text">ISBN: {{book.isbn}}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+                {% if count|length >= 10 %}
+                    <p class="text-primary">Search results were truncated, try narrowing your search.</p>
+                {% endif %}
+            {% else %}
+                {% if query %}
+                    <h2>No Search Results for "{{query}}"...</h2>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    {% endwith %}
+
+</div>
+
+{% endblock %}
